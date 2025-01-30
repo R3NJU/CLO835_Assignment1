@@ -51,7 +51,7 @@ jobs:
     - name: Test Flask App
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: CLO835-Assignment1-Flask
+        ECR_REPOSITORY: clo835-assignment1-flask
         IMAGE_TAG: v0.1
       run: |
         # Run SQL Container
