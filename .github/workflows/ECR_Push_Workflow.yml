@@ -37,6 +37,8 @@ jobs:
         # Docker build command for SQL
         docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        # Run SQL Container
+        docker run --name my_db -d -e MYSQL_ROOT_PASSWORD=pw $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Build Flask App
       env:
@@ -54,12 +56,10 @@ jobs:
         ECR_REPOSITORY: clo835-assignment1-flask
         IMAGE_TAG: v0.1
       run: |
-        # Run SQL Container
-        docker run --name my_db -d -e MYSQL_ROOT_PASSWORD=pw sql_app
         # Export Env Variables
         export DBHOST=172.17.0.2; export DBPORT=3306; export DBUSER=root; export DATABASE=employees; export DBPWD=pw
         # Run Flask Container
-        docker run --name flask_app -d -p 80:8080 -e DBHOST=$DBHOST -e DBPORT=$DBPORT -e DBUSER=$DBUSER -e DBPWD=$DBPWD -e APP_COLOR="blue" flask_app
+        docker run --name flask_app -d -p 80:8080 -e DBHOST=$DBHOST -e DBPORT=$DBPORT -e DBUSER=$DBUSER -e DBPWD=$DBPWD -e APP_COLOR="blue" $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         # Testing the containers
         docker ps
         echo "Pause for 10 seconds to let container start"
