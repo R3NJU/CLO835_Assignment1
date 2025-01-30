@@ -30,7 +30,7 @@ jobs:
     - name: Build and Push SQL Image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: CLO835-Assignment1-SQL
+        ECR_REPOSITORY: clo835-assignment1-sql
         IMAGE_TAG: v0.1
       run: |
         ls -ltra
@@ -41,7 +41,7 @@ jobs:
     - name: Build Flask App
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: CLO835-Assignment1-Flask
+        ECR_REPOSITORY: clo835-assignment1-flask
         IMAGE_TAG: v0.1
       run: |
         ls -ltra
