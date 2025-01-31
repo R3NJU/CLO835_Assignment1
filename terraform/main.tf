@@ -12,6 +12,16 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "aws_ecr_repository" "flask_ecr" {
+  name                 = "clo835-assignment1-flask"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_repository" "sql_ecr" {
+  name                 = "clo835-assignment1-sql"
+  image_tag_mutability = "MUTABLE"
+}
+
 # Get the default VPC
 data "aws_vpc" "default" {
   default = true
