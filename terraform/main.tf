@@ -45,12 +45,17 @@ data "aws_subnet" "default" {
   }
 
   filter {
-    name = "availability-zone"
+    name   = "availability-zone"
     values = ["us-east-1a"]
   }
 }
 
-#Creating Web App Instance
+# Get IAM Instance Profile
+data "aws_iam_instance_profile" "ec2_profile" {
+  name = var.iam_role
+}
+
+# Creating Web App Instance
 resource "aws_instance" "flask_app" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = "t2.micro"
@@ -58,20 +63,11 @@ resource "aws_instance" "flask_app" {
   security_groups             = [aws_security_group.Web_SG.id]
   subnet_id                   = data.aws_subnet.default.id
   associate_public_ip_address = true
-  user_data                   = <<-EOF
-                                #!/bin/bash
-                                sudo yum update -y
-                                sudo yum install -y docker
-                                sudo systemctl start docker
-                                sudo systemctl enable docker
-                                sudo usermod -aG docker ec2-user
-                                newgrp docker
-                                sudo chmod 666 /var/run/docker.sock
-                                sudo docker network create -d bridge --subnet 10.0.0.0/24 --gateway 10.0.0.1 my-nw
-                                EOF
+  user_data                   = file("userdata.sh")
+  iam_instance_profile        = data.aws_iam_instance_profile.ec2_profile.name
   tags = {
-      "Name" = "Flask_App"
-    }
+    "Name" = "Flask_App"
+  }
 }
 
 # Security group for Web App
